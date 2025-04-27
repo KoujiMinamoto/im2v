@@ -1,98 +1,137 @@
+// 登录和注册功能
 document.addEventListener('DOMContentLoaded', function() {
-    // 标签切换功能
-    const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabId = tab.getAttribute('data-tab');
-            
-            // 更新活动标签
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            // 显示对应的内容
-            tabContents.forEach(content => {
-                content.style.display = 'none';
-            });
-            document.getElementById(tabId).style.display = 'block';
+  // 切换标签
+  const tabs = document.querySelectorAll('.tab');
+  const tabContents = document.querySelectorAll('.tab-content');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabId = this.getAttribute('data-tab');
+      
+      // 移除所有标签的active类
+      tabs.forEach(t => t.classList.remove('active'));
+      // 添加当前标签的active类
+      this.classList.add('active');
+      
+      // 隐藏所有内容
+      tabContents.forEach(content => {
+        content.style.display = 'none';
+      });
+      
+      // 显示当前内容
+      document.getElementById(tabId).style.display = 'block';
+    });
+  });
+  
+  // 登录表单提交
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+      
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
         });
-    });
-    
-    // 表单提交处理
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const username = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
         
-        // 这里添加登录逻辑
-        console.log('登录请求:', { username, password });
-        // 修改重定向到 main.html（原 index.html）
-        window.location.href = 'main.html';
-    });
-    
-    registerForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const username = document.getElementById('register-username').value;
-        const email = document.getElementById('register-email').value;
-        const password = document.getElementById('register-password').value;
-        const confirmPassword = document.getElementById('register-confirm-password').value;
+        const data = await response.json();
         
-        if (password !== confirmPassword) {
-            alert('两次输入的密码不一致');
-            return;
+        if (response.ok) {
+          // 登录成功，跳转到主页
+          window.location.href = 'main.html';
+        } else {
+          // 登录失败，显示错误信息
+          alert(data.error || '登录失败');
         }
-        
-        // 这里添加注册逻辑
-        console.log('注册请求:', { username, email, password });
-        alert('注册功能尚未实现，请稍后再试');
+      } catch (error) {
+        console.error('登录错误:', error);
+        alert('登录失败，请稍后再试');
+      }
     });
-    
-    // 加载瀑布流图片
-    loadWaterfallImages();
+  }
+  
+  // 注册表单提交
+  const registerForm = document.getElementById('register-form');
+  if (registerForm) {
+    registerForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('register-username').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const confirmPassword = document.getElementById('register-confirm-password').value;
+      
+      // 验证密码
+      if (password !== confirmPassword) {
+        alert('两次输入的密码不一致');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // 注册成功，跳转到主页
+          window.location.href = 'main.html';
+        } else {
+          // 注册失败，显示错误信息
+          alert(data.error || '注册失败');
+        }
+      } catch (error) {
+        console.error('注册错误:', error);
+        alert('注册失败，请稍后再试');
+      }
+    });
+  }
 });
 
-// 瀑布流图片数据
-const imageData = [
-    { src: 'images/waterfall-1.jpg', alt: '瀑布流图片1' },
-    { src: 'images/waterfall-2.jpg', alt: '瀑布流图片2' },
-    { src: 'images/waterfall-3.jpg', alt: '瀑布流图片3' },
-    { src: 'images/waterfall-4.jpg', alt: '瀑布流图片4' },
-    { src: 'images/waterfall-5.jpg', alt: '瀑布流图片5' },
-    { src: 'images/waterfall-6.jpg', alt: '瀑布流图片6' },
-    { src: 'images/waterfall-7.jpg', alt: '瀑布流图片7' },
-    { src: 'images/waterfall-8.jpg', alt: '瀑布流图片8' },
-    { src: 'images/waterfall-9.jpg', alt: '瀑布流图片9' },
-    { src: 'images/waterfall-10.jpg', alt: '瀑布流图片10' },
-    // 可以根据需要添加更多图片
-];
+// 检查用户登录状态
+async function checkLoginStatus() {
+  try {
+    const response = await fetch('/api/user');
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.user;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('检查登录状态错误:', error);
+    return null;
+  }
+}
 
-function loadWaterfallImages() {
-    const waterfallContainer = document.getElementById('waterfall');
-    
-    // 清空容器
-    waterfallContainer.innerHTML = '';
-    
-    // 创建并添加图片元素
-    imageData.forEach(image => {
-        const item = document.createElement('div');
-        item.className = 'waterfall-item';
-        
-        const img = document.createElement('img');
-        img.src = image.src;
-        img.alt = image.alt;
-        img.loading = 'lazy'; // 懒加载
-        
-        item.appendChild(img);
-        waterfallContainer.appendChild(item);
+// 登出功能
+async function logout() {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST'
     });
     
-    // 随机排列图片
-    const items = document.querySelectorAll('.waterfall-item');
-    items.forEach(item => {
-        item.style.order = Math.floor(Math.random() * items.length);
-    });
+    if (response.ok) {
+      // 登出成功，跳转到登录页
+      window.location.href = 'index.html';
+    } else {
+      alert('登出失败，请稍后再试');
+    }
+  } catch (error) {
+    console.error('登出错误:', error);
+    alert('登出失败，请稍后再试');
+  }
 }

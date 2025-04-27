@@ -114,59 +114,6 @@
     </div>
   </div>
 
-  <script>
-    // 登出逻辑
-    document.getElementById('logout-btn').addEventListener('click', function() {
-      window.location.href = 'index.html';
-    });
-    
-    // 打开修改昵称模态框
-    document.getElementById('edit-nickname-btn').addEventListener('click', function() {
-      document.getElementById('nickname-modal').classList.remove('hidden');
-      document.getElementById('nickname-modal').style.visibility = 'visible';
-    });
-    
-    // 关闭修改昵称模态框
-    document.querySelectorAll('.close-modal').forEach(function(element) {
-      element.addEventListener('click', function() {
-        document.getElementById('nickname-modal').classList.add('hidden');
-        document.getElementById('nickname-modal').style.visibility = 'hidden';
-      });
-    });
-    
-    // 定义变量
-    const nicknameForm = document.getElementById('nickname-form');
-    const nicknameModal = document.getElementById('nickname-modal');
-    
-    nicknameForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const newNickname = document.getElementById('new-nickname').value;
-      document.getElementById('profile-nickname').textContent = newNickname;
-      nicknameModal.classList.add('hidden');
-      
-      // 这里可以添加保存到服务器的逻辑
-      console.log('昵称已更新为:', newNickname);
-    });
-    
-    // 修改密码逻辑
-    const passwordForm = document.getElementById('password-form');
-    
-    passwordForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const currentPassword = document.getElementById('current-password').value;
-      const newPassword = document.getElementById('new-password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-      
-      if (newPassword !== confirmPassword) {
-        alert('两次输入的新密码不一致');
-        return;
-      }
-      
-      // 这里可以添加密码验证和更新的逻辑
-      console.log('密码更新请求已提交');
-      alert('密码已成功更新');
-      passwordForm.reset();
-    });
-  </script>
+  <script src="js/profile.js"></script>
 </body>
 </html>
