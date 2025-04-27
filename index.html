@@ -1,144 +1,205 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kouji AI 视频生成器</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IM2V - 登录</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 隐藏瀑布流图片 */
+        .waterfall-container {
+            display: none !important;
+        }
+        
+        /* 登录界面特定样式 */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .auth-box {
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            box-shadow: 0 0 20px rgba(5, 217, 232, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .auth-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--cyber-gradient);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: rgba(209, 247, 255, 0.7);
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            box-shadow: 0 4px 6px -6px var(--primary-color);
+        }
+        
+        .tab:hover:not(.active) {
+            color: var(--secondary-color);
+            border-bottom-color: var(--secondary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            background-color: rgba(10, 10, 25, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: 0;
+            box-shadow: var(--neon-glow);
+        }
+        
+        .btn-submit {
+            display: inline-block;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            width: 100%;
+            color: #fff;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            box-shadow: var(--neon-glow);
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="cyber-decor cyber-decor-1">
-      /* KLING-AI-SYS v1.6.0 */
-      /* INITIALIZING VIDEO SYNTHESIS */
-    </div>
-    
-    <header class="header">
-      <h1>Kouji AI 视频生成器</h1>
-      <p>使用先进的 AI 技术，将图片或文字转化为高质量视频 // NOVITA.AI</p>
-    </header>
-
-    <div class="card">
-      <div class="card-header">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-        <h2>创建新视频 // NEW_VIDEO</h2>
-      </div>
-
-      <div class="tabs">
-        <div class="tab active" data-tab="image">图片生成视频</div>
-        <div class="tab" data-tab="text">文字生成视频</div>
-      </div>
-
-      <form id="videoForm">
-        <div class="form-group">
-          <label for="generationType">生成类型 // GENERATION_TYPE</label>
-          <select id="generationType" name="generationType" class="form-control" required>
-            <option value="image">图片生成视频</option>
-            <option value="text">文字生成视频</option>
-          </select>
+    <div class="container">
+        <div class="cyber-decor cyber-decor-1">
+          /* KLING-AI-SYS v1.6.0 */
+          /* INITIALIZING LOGIN SYSTEM */
+        </div>
+        
+        <header class="header">
+          <h1>Kouji AI 视频生成器</h1>
+          <p>请登录以使用先进的 AI 视频生成技术 // NOVITA.AI</p>
+        </header>
+        
+        <div class="waterfall-container" id="waterfall">
+            <!-- 瀑布流图片将通过JavaScript动态加载 -->
         </div>
 
-        <div class="form-group">
-          <label for="mode">模式 // MODE</label>
-          <select id="mode" name="mode" class="form-control">
-            <option value="Standard">标准模式</option>
-            <option value="Professional">专业模式</option>
-          </select>
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="tabs">
+                    <div class="tab active" data-tab="login">登录</div>
+                    <div class="tab" data-tab="register">注册</div>
+                </div>
+                
+                <div class="tab-content" id="login">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-username">用户名</label>
+                            <input type="text" id="login-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">密码</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn-submit">登录</button>
+                    </form>
+                </div>
+                
+                <div class="tab-content" id="register" style="display: none;">
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="register-username">用户名</label>
+                            <input type="text" id="register-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">电子邮箱</label>
+                            <input type="email" id="register-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">密码</label>
+                            <input type="password" id="register-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-confirm-password">确认密码</label>
+                            <input type="password" id="register-confirm-password" required>
+                        </div>
+                        <button type="submit" class="btn-submit">注册</button>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div id="imageInputs">
-          <div class="form-group">
-            <label for="imageUrl">起始图片 URL // START_IMAGE</label>
-            <input type="url" id="imageUrl" name="imageUrl" class="form-control" placeholder="输入有效的图片URL" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="endImageUrl">结束图片 URL // END_IMAGE (仅专业模式)</label>
-            <input type="url" id="endImageUrl" name="endImageUrl" class="form-control" placeholder="输入结束图片URL (可选，仅专业模式)" disabled>
-          </div>
-          
-          <div class="form-group">
-            <label for="prompt">提示词 // PROMPT</label>
-            <textarea id="prompt" name="prompt" class="form-control" rows="3" placeholder="描述您希望生成的视频内容" required></textarea>
-            <small id="promptHelp" class="form-text">必填，引导生成过程的文本提示</small>
-          </div>
+        
+        <div class="cyber-decor cyber-decor-2">
+          /* SYSTEM READY */
+          /* AWAITING LOGIN */
         </div>
-
-        <div id="textInputs" class="hidden">
-          <div class="form-group">
-            <label for="textPrompt">文字提示词 // TEXT_PROMPT</label>
-            <textarea id="textPrompt" name="textPrompt" class="form-control" rows="3" placeholder="描述您想要生成的视频内容"></textarea>
-            <small class="form-text">必填，详细描述您想要生成的视频场景</small>
-          </div>
-          
-          <div class="form-group">
-            <label for="prompt">额外提示词 // ADDITIONAL_PROMPT</label>
-            <textarea id="prompt" name="prompt" class="form-control" rows="2" placeholder="添加额外的提示词以增强视频效果"></textarea>
-            <small class="form-text">可选，额外的生成提示</small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="guidanceScale">引导比例 // GUIDANCE_SCALE: <span id="guidanceScaleValue">0.5</span></label>
-          <input type="range" id="guidanceScale" name="guidanceScale" class="form-control" min="0.1" max="1" value="0.5" step="0.1">
-          <small class="form-text">控制生成内容与提示词的匹配程度，值越高越接近提示词描述</small>
-        </div>
-
-        <div class="form-group">
-          <label for="negativePrompt">负面提示词 // NEGATIVE_PROMPT</label>
-          <textarea id="negativePrompt" name="negativePrompt" class="form-control" rows="2" placeholder="描述您不希望在视频中出现的内容"></textarea>
-          <small class="form-text">可选，指定您希望避免的元素</small>
-        </div>
-
-        <button type="submit" id="generateBtn" class="btn btn-primary btn-block">生成视频 // GENERATE</button>
-      </form>
     </div>
 
-    <div id="loadingIndicator" class="loading-container hidden">
-      <div class="spinner"></div>
-      <p id="statusMessage" class="status-message">正在初始化生成任务...</p>
-      <div class="progress-container">
-        <div class="progress-bar">
-          <div id="progressFill" class="progress-bar-fill"></div>
-        </div>
-        <p id="progressText" class="progress-text">0%</p>
-      </div>
-    </div>
-
-    <div id="resultContainer" class="result-container hidden">
-      <div class="result-card">
-        <div class="result-header">
-          <h2>生成结果 // OUTPUT</h2>
-          <button id="downloadBtn" class="btn download-btn" disabled>下载视频</button>
-        </div>
-        <div id="videoContainer" class="video-container">
-          <!-- 视频将在这里显示 -->
-        </div>
-      </div>
-    </div>
-
-    <div id="errorContainer" class="alert alert-error hidden">
-      <strong>错误 // ERROR:</strong>
-      <span id="errorMessage"></span>
-    </div>
-
-    <footer class="footer">
-      <p>本工具使用 <a href="https://novita.ai" target="_blank">Novita AI</a> 的 KLING 模型提供支持 // v1.6</p>
-      <div class="api-links">
-        <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-i2v" target="_blank">图生视频 API</a>
-        <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-t2v" target="_blank">文生视频 API</a>
-      </div>
-    </footer>
-    
-    <div class="cyber-decor cyber-decor-2">
-      /* SYSTEM READY */
-      /* AWAITING INPUT */
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
