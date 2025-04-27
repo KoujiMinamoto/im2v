@@ -14,6 +14,15 @@
       /* INITIALIZING VIDEO SYNTHESIS */
     </div>
     
+    <!-- 添加用户信息和登出按钮 -->
+    <div class="user-panel">
+      <div class="user-info">
+        <span class="username">用户名</span>
+        <a href="profile.html" class="profile-link">个人资料</a>
+      </div>
+      <button id="logout-btn" class="btn-logout">登出</button>
+    </div>
+    
     <header class="header">
       <h1>Kouji AI 视频生成器</h1>
       <p>使用先进的 AI 技术，将图片或文字转化为高质量视频 // NOVITA.AI</p>
@@ -140,15 +149,12 @@
   </div>
 
   <script src="script.js"></script>
+  
+  <!-- 登出逻辑 -->
+  <script>
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      window.location.href = 'index.html';
+    });
+  </script>
 </body>
 </html>
-
-<!-- 在适当位置添加登出按钮 -->
-<button id="logout-btn" class="btn-logout">登出</button>
-
-<!-- 在 script 标签中添加登出逻辑 -->
-<script>
-    document.getElementById('logout-btn').addEventListener('click', function() {
-        window.location.href = 'index.html';
-    });
-</script>
