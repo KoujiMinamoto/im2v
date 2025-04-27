@@ -1,116 +1,144 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kling AI 视频生成工具</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kouji AI 视频生成器</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Kling AI 视频生成工具</h1>
-            <p>基于 Novita AI 的 KLING V1.6 API</p>
-        </header>
+  <div class="container">
+    <div class="cyber-decor cyber-decor-1">
+      /* KLING-AI-SYS v1.6.0 */
+      /* INITIALIZING VIDEO SYNTHESIS */
+    </div>
+    
+    <header class="header">
+      <h1>Kouji AI 视频生成器</h1>
+      <p>使用先进的 AI 技术，将图片或文字转化为高质量视频 // NOVITA.AI</p>
+    </header>
 
-        <main>
-            <section class="form-section">
-                <h2>参数设置</h2>
-                <form id="videoForm">
-                    <div class="form-group">
-                        <label for="generationType">生成类型</label>
-                        <select id="generationType">
-                            <option value="image">图片生成视频</option>
-                            <option value="text">文字生成视频</option>
-                        </select>
-                        <small>选择视频生成的输入类型</small>
-                    </div>
+    <div class="card">
+      <div class="card-header">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+        <h2>创建新视频 // NEW_VIDEO</h2>
+      </div>
 
-                    <div class="form-group">
-                        <label for="mode">模式</label>
-                        <select id="mode">
-                            <option value="Standard">标准</option>
-                            <option value="Professional">专业</option>
-                        </select>
-                        <small>选择生成模式</small>
-                    </div>
+      <div class="tabs">
+        <div class="tab active" data-tab="image">图片生成视频</div>
+        <div class="tab" data-tab="text">文字生成视频</div>
+      </div>
 
-                    <div id="imageInputs">
-                        <div class="form-group">
-                            <label for="imageUrl">起始图片 URL</label>
-                            <input type="url" id="imageUrl">
-                            <small>必填，用作视频的起始帧</small>
-                        </div>
+      <form id="videoForm">
+        <div class="form-group">
+          <label for="generationType">生成类型 // GENERATION_TYPE</label>
+          <select id="generationType" name="generationType" class="form-control" required>
+            <option value="image">图片生成视频</option>
+            <option value="text">文字生成视频</option>
+          </select>
+        </div>
 
-                        <div class="form-group">
-                            <label for="endImageUrl">结束图片 URL</label>
-                            <input type="url" id="endImageUrl">
-                            <small>可选，仅在专业模式下可用</small>
-                        </div>
-                    </div>
+        <div class="form-group">
+          <label for="mode">模式 // MODE</label>
+          <select id="mode" name="mode" class="form-control">
+            <option value="Standard">标准模式</option>
+            <option value="Professional">专业模式</option>
+          </select>
+        </div>
 
-                    <div id="textInputs" class="hidden">
-                        <div class="form-group">
-                            <label for="textPrompt">文字提示词</label>
-                            <textarea id="textPrompt"></textarea>
-                            <small>必填，描述要生成的视频内容</small>
-                        </div>
-                    </div>
+        <div id="imageInputs">
+          <div class="form-group">
+            <label for="imageUrl">起始图片 URL // START_IMAGE</label>
+            <input type="url" id="imageUrl" name="imageUrl" class="form-control" placeholder="输入有效的图片URL" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="endImageUrl">结束图片 URL // END_IMAGE (仅专业模式)</label>
+            <input type="url" id="endImageUrl" name="endImageUrl" class="form-control" placeholder="输入结束图片URL (可选，仅专业模式)" disabled>
+          </div>
+          
+          <div class="form-group">
+            <label for="prompt">提示词 // PROMPT</label>
+            <textarea id="prompt" name="prompt" class="form-control" rows="3" placeholder="描述您希望生成的视频内容" required></textarea>
+            <small id="promptHelp" class="form-text">必填，引导生成过程的文本提示</small>
+          </div>
+        </div>
 
-                    <div class="form-group">
-                        <label for="prompt">提示词</label>
-                        <textarea id="prompt"></textarea>
-                        <small id="promptHelp">必填，引导生成过程的文本提示</small>
-                    </div>
+        <div id="textInputs" class="hidden">
+          <div class="form-group">
+            <label for="textPrompt">文字提示词 // TEXT_PROMPT</label>
+            <textarea id="textPrompt" name="textPrompt" class="form-control" rows="3" placeholder="描述您想要生成的视频内容"></textarea>
+            <small class="form-text">必填，详细描述您想要生成的视频场景</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="prompt">额外提示词 // ADDITIONAL_PROMPT</label>
+            <textarea id="prompt" name="prompt" class="form-control" rows="2" placeholder="添加额外的提示词以增强视频效果"></textarea>
+            <small class="form-text">可选，额外的生成提示</small>
+          </div>
+        </div>
 
-                    <div class="form-group">
-                        <label for="negativePrompt">负面提示词</label>
-                        <textarea id="negativePrompt"></textarea>
-                        <small>可选，指示模型应避免生成的元素</small>
-                    </div>
+        <div class="form-group">
+          <label for="guidanceScale">引导比例 // GUIDANCE_SCALE: <span id="guidanceScaleValue">0.5</span></label>
+          <input type="range" id="guidanceScale" name="guidanceScale" class="form-control" min="0.1" max="1" value="0.5" step="0.1">
+          <small class="form-text">控制生成内容与提示词的匹配程度，值越高越接近提示词描述</small>
+        </div>
 
-                    <div class="form-group">
-                        <label for="guidanceScale">引导比例</label>
-                        <input type="range" id="guidanceScale" min="0" max="1" step="0.01" value="0.5">
-                        <span id="guidanceScaleValue">0.5</span>
-                        <small>控制生成内容与提示的匹配程度 (0-1)</small>
-                    </div>
+        <div class="form-group">
+          <label for="negativePrompt">负面提示词 // NEGATIVE_PROMPT</label>
+          <textarea id="negativePrompt" name="negativePrompt" class="form-control" rows="2" placeholder="描述您不希望在视频中出现的内容"></textarea>
+          <small class="form-text">可选，指定您希望避免的元素</small>
+        </div>
 
-                    <button type="submit" id="generateBtn">生成视频</button>
-                </form>
-            </section>
-
-            <section class="result-section" id="resultSection">
-                <h2>生成结果</h2>
-                <div id="loadingIndicator" class="hidden">
-                    <div class="spinner"></div>
-                    <p id="statusMessage">正在处理请求...</p>
-                    <div id="progressBar">
-                        <div id="progressFill"></div>
-                    </div>
-                    <p id="progressText">0%</p>
-                </div>
-
-                <div id="resultContainer" class="hidden">
-                    <div id="videoContainer">
-                        <!-- 视频将在这里显示 -->
-                    </div>
-                    <div class="button-group">
-                        <button id="downloadBtn" disabled>下载视频</button>
-                    </div>
-                </div>
-
-                <div id="errorContainer" class="hidden">
-                    <p id="errorMessage"></p>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>本工具使用 <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-i2v" target="_blank">Novita AI KLING V1.6 I2V API</a> 和 <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-t2v" target="_blank">Novita AI KLING V1.6 T2V API</a> 提供支持</p>
-        </footer>
+        <button type="submit" id="generateBtn" class="btn btn-primary btn-block">生成视频 // GENERATE</button>
+      </form>
     </div>
 
-    <script src="script.js"></script>
+    <div id="loadingIndicator" class="loading-container hidden">
+      <div class="spinner"></div>
+      <p id="statusMessage" class="status-message">正在初始化生成任务...</p>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-bar-fill"></div>
+        </div>
+        <p id="progressText" class="progress-text">0%</p>
+      </div>
+    </div>
+
+    <div id="resultContainer" class="result-container hidden">
+      <div class="result-card">
+        <div class="result-header">
+          <h2>生成结果 // OUTPUT</h2>
+          <button id="downloadBtn" class="btn download-btn" disabled>下载视频</button>
+        </div>
+        <div id="videoContainer" class="video-container">
+          <!-- 视频将在这里显示 -->
+        </div>
+      </div>
+    </div>
+
+    <div id="errorContainer" class="alert alert-error hidden">
+      <strong>错误 // ERROR:</strong>
+      <span id="errorMessage"></span>
+    </div>
+
+    <footer class="footer">
+      <p>本工具使用 <a href="https://novita.ai" target="_blank">Novita AI</a> 的 KLING 模型提供支持 // v1.6</p>
+      <div class="api-links">
+        <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-i2v" target="_blank">图生视频 API</a>
+        <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-t2v" target="_blank">文生视频 API</a>
+      </div>
+    </footer>
+    
+    <div class="cyber-decor cyber-decor-2">
+      /* SYSTEM READY */
+      /* AWAITING INPUT */
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>

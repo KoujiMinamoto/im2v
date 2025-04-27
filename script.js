@@ -1,75 +1,102 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     // 获取DOM元素
     const videoForm = document.getElementById('videoForm');
     const generationTypeSelect = document.getElementById('generationType');
     const modeSelect = document.getElementById('mode');
-    const imageInputsContainer = document.getElementById('imageInputs');
-    const textInputsContainer = document.getElementById('textInputs');
+    const imageInputs = document.getElementById('imageInputs');
+    const textInputs = document.getElementById('textInputs');
     const imageUrlInput = document.getElementById('imageUrl');
     const endImageUrlInput = document.getElementById('endImageUrl');
     const textPromptInput = document.getElementById('textPrompt');
     const promptInput = document.getElementById('prompt');
-    const promptHelp = document.getElementById('promptHelp');
-    const negativePromptInput = document.getElementById('negativePrompt');
     const guidanceScaleInput = document.getElementById('guidanceScale');
     const guidanceScaleValue = document.getElementById('guidanceScaleValue');
-    const generateBtn = document.getElementById('generateBtn');
+    const negativePromptInput = document.getElementById('negativePrompt');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const resultContainer = document.getElementById('resultContainer');
     const videoContainer = document.getElementById('videoContainer');
-    const downloadBtn = document.getElementById('downloadBtn');
     const errorContainer = document.getElementById('errorContainer');
     const errorMessage = document.getElementById('errorMessage');
     const statusMessage = document.getElementById('statusMessage');
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const tabs = document.querySelectorAll('.tab');
+
+    // 添加赛博朋克风格的控制台日志
+    console.log('%c[KLING-AI-SYS] %c初始化系统...', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
     
-    // 根据生成类型切换输入表单
-    function updateFormFields() {
-        const isImageToVideo = generationTypeSelect.value === 'image';
+    // 标签切换功能
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // 移除所有标签的active类
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            // 添加当前标签的active类
+            this.classList.add('active');
+            
+            // 更新生成类型选择器
+            const tabType = this.getAttribute('data-tab');
+            generationTypeSelect.value = tabType;
+            
+            // 触发change事件以更新表单
+            const event = new Event('change');
+            generationTypeSelect.dispatchEvent(event);
+            
+            console.log(`%c[KLING-AI-SYS] %c切换到${tabType === 'image' ? '图片生成视频' : '文字生成视频'}模式`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
+        });
+    });
+
+    // 生成类型变更事件
+    generationTypeSelect.addEventListener('change', function() {
+        const selectedType = this.value;
         
-        // 切换输入容器的显示状态
-        imageInputsContainer.classList.toggle('hidden', !isImageToVideo);
-        textInputsContainer.classList.toggle('hidden', isImageToVideo);
+        // 更新标签状态
+        tabs.forEach(tab => {
+            if (tab.getAttribute('data-tab') === selectedType) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
         
-        // 更新提示词帮助文本
-        if (isImageToVideo) {
-            promptHelp.textContent = '必填，引导生成过程的文本提示';
-            imageUrlInput.setAttribute('required', '');
-            textPromptInput.removeAttribute('required');
-            promptInput.setAttribute('required', '');
+        // 显示/隐藏相应的输入字段
+        if (selectedType === 'image') {
+            imageInputs.classList.remove('hidden');
+            textInputs.classList.add('hidden');
         } else {
-            promptHelp.textContent = '可选，额外的生成提示';
-            imageUrlInput.removeAttribute('required');
-            textPromptInput.setAttribute('required', '');
-            promptInput.removeAttribute('required');
+            imageInputs.classList.add('hidden');
+            textInputs.classList.remove('hidden');
         }
-    }
-    
-    // 初始化表单字段
-    updateFormFields();
-    
-    // 监听生成类型变化
-    generationTypeSelect.addEventListener('change', updateFormFields);
-
-    // 更新引导比例值显示
-    guidanceScaleInput.addEventListener('input', () => {
-        guidanceScaleValue.textContent = guidanceScaleInput.value;
+        
+        console.log(`%c[KLING-AI-SYS] %c生成类型已更改为: ${selectedType}`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
     });
 
-    // 监听模式变化，控制结束图片输入框的可用性
-    modeSelect.addEventListener('change', () => {
-        const isProfessional = modeSelect.value === 'Professional';
-        endImageUrlInput.disabled = !isProfessional;
-        if (!isProfessional) {
-            endImageUrlInput.value = '';
+    // 模式变更事件
+    modeSelect.addEventListener('change', function() {
+        const selectedMode = this.value;
+        
+        // 启用/禁用结束图片输入框
+        if (selectedMode === 'Professional' && generationTypeSelect.value === 'image') {
+            endImageUrlInput.disabled = false;
+            endImageUrlInput.placeholder = '输入结束图片URL (可选，专业模式)';
+        } else {
+            endImageUrlInput.disabled = true;
+            endImageUrlInput.placeholder = '输入结束图片URL (可选，仅专业模式)';
         }
+        
+        console.log(`%c[KLING-AI-SYS] %c模式已更改为: ${selectedMode}`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
     });
 
-    // 表单提交处理
+    // 引导比例滑块事件
+    guidanceScaleInput.addEventListener('input', function() {
+        guidanceScaleValue.textContent = this.value;
+    });
+
+    // 表单提交事件
     videoForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log('开始处理视频生成请求...');
+        console.log('%c[KLING-AI-SYS] %c开始处理视频生成请求...', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
         
         // 重置UI状态
         resetUI();
@@ -162,15 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
         } catch (error) {
-            console.error('视频生成请求失败:', error.message);
+            console.error('%c[KLING-AI-SYS] %c视频生成请求失败:', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;', error.message);
             showError(error.message);
         }
-        console.log('视频生成请求处理完成');
+        console.log('%c[KLING-AI-SYS] %c视频生成请求处理完成', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
     });
 
     // 创建图片生成视频任务
     async function createImageToVideoTask(data) {
-        console.log('发送图片生成视频API请求数据:', JSON.stringify(data));
+        console.log('%c[KLING-AI-SYS] %c发送图片生成视频API请求数据:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', JSON.stringify(data));
         
         const response = await fetch('/api/create-video-task', {
             method: 'POST',
@@ -180,23 +207,23 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify(data)
         });
         
-        console.log('API请求状态:', response.status, response.statusText);
+        console.log('%c[KLING-AI-SYS] %cAPI请求状态:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', response.status, response.statusText);
         
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('API请求失败:', errorData);
+            console.error('%c[KLING-AI-SYS] %cAPI请求失败:', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;', errorData);
             throw new Error(`API请求失败: ${errorData.message || response.statusText || '未知错误'}`);
         }
         
         const result = await response.json();
-        console.log('API请求成功，返回结果:', result);
-        console.log('获取到的任务ID:', result.task_id);
+        console.log('%c[KLING-AI-SYS] %cAPI请求成功，返回结果:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', result);
+        console.log('%c[KLING-AI-SYS] %c获取到的任务ID:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', result.task_id);
         return result.task_id;
     }
     
     // 创建文字生成视频任务
     async function createTextToVideoTask(data) {
-        console.log('发送文字生成视频API请求数据:', JSON.stringify(data));
+        console.log('%c[KLING-AI-SYS] %c发送文字生成视频API请求数据:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', JSON.stringify(data));
         
         const response = await fetch('/api/create-text-to-video-task', {
             method: 'POST',
@@ -206,17 +233,17 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify(data)
         });
         
-        console.log('API请求状态:', response.status, response.statusText);
+        console.log('%c[KLING-AI-SYS] %cAPI请求状态:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', response.status, response.statusText);
         
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('API请求失败:', errorData);
+            console.error('%c[KLING-AI-SYS] %cAPI请求失败:', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;', errorData);
             throw new Error(`API请求失败: ${errorData.message || response.statusText || '未知错误'}`);
         }
         
         const result = await response.json();
-        console.log('API请求成功，返回结果:', result);
-        console.log('获取到的任务ID:', result.task_id);
+        console.log('%c[KLING-AI-SYS] %cAPI请求成功，返回结果:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', result);
+        console.log('%c[KLING-AI-SYS] %c获取到的任务ID:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', result.task_id);
         return result.task_id;
     }
 
@@ -226,11 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxAttempts = 60; // 最多尝试60次，约10分钟
         const pollInterval = 10000; // 10秒轮询一次
         
-        console.log(`开始轮询任务结果，任务ID: ${taskId}，最大尝试次数: ${maxAttempts}，轮询间隔: ${pollInterval}ms`);
+        console.log(`%c[KLING-AI-SYS] %c开始轮询任务结果，任务ID: ${taskId}，最大尝试次数: ${maxAttempts}，轮询间隔: ${pollInterval}ms`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
         
         const checkResult = async () => {
             attempts++;
-            console.log(`轮询尝试次数: ${attempts}/${maxAttempts}`);
+            console.log(`%c[KLING-AI-SYS] %c轮询尝试次数: ${attempts}/${maxAttempts}`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
             
             try {
                 const result = await getTaskResult(taskId);
@@ -238,39 +265,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 更新进度
                 if (result.task && result.task.progress_percent !== undefined) {
                     const progress = result.task.progress_percent;
-                    console.log(`任务进度: ${progress}%`);
+                    console.log(`%c[KLING-AI-SYS] %c任务进度: ${progress}%`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
                     updateProgress(progress);
                 }
                 
                 // 检查任务状态
-                console.log('当前任务状态:', result.task ? result.task.status : '未知');
+                console.log('%c[KLING-AI-SYS] %c当前任务状态:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', result.task ? result.task.status : '未知');
                 
                 if (result.task && result.task.status === 'TASK_STATUS_SUCCEED') {
                     // 任务成功完成
-                    console.log('任务成功完成!');
+                    console.log('%c[KLING-AI-SYS] %c任务成功完成!', 'color: #00ff66; font-weight: bold;', 'color: #e0e0e0;');
                     if (result.videos && result.videos.length > 0) {
-                        console.log('找到生成的视频:', result.videos[0].video_url);
+                        console.log('%c[KLING-AI-SYS] %c找到生成的视频:', 'color: #00ff66; font-weight: bold;', 'color: #e0e0e0;', result.videos[0].video_url);
                         displayVideo(result.videos[0].video_url);
                         return;
                     } else {
-                        console.error('未找到生成的视频');
+                        console.error('%c[KLING-AI-SYS] %c未找到生成的视频', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;');
                         throw new Error('未找到生成的视频');
                     }
                 } else if (result.task && result.task.status === 'TASK_STATUS_FAILED') {
                     // 任务失败
-                    console.error('任务失败:', result.task.reason || '未知原因');
+                    console.error('%c[KLING-AI-SYS] %c任务失败:', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;', result.task.reason || '未知原因');
                     throw new Error(`任务失败: ${result.task.reason || '未知原因'}`);
                 } else if (attempts >= maxAttempts) {
                     // 超过最大尝试次数
-                    console.error('生成超时，请稍后再试');
+                    console.error('%c[KLING-AI-SYS] %c生成超时，请稍后再试', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;');
                     throw new Error('生成超时，请稍后再试');
                 } else {
                     // 继续轮询
-                    console.log(`任务仍在进行中，${pollInterval/1000}秒后再次检查...`);
+                    console.log(`%c[KLING-AI-SYS] %c任务仍在进行中，${pollInterval/1000}秒后再次检查...`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
                     setTimeout(checkResult, pollInterval);
                 }
             } catch (error) {
-                console.error('轮询过程中发生错误:', error.message);
+                console.error('%c[KLING-AI-SYS] %c轮询过程中发生错误:', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;', error.message);
                 showError(error.message);
             }
         };
@@ -281,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 获取任务结果
     async function getTaskResult(taskId) {
-        console.log(`正在获取任务结果，任务ID: ${taskId}`);
+        console.log(`%c[KLING-AI-SYS] %c正在获取任务结果，任务ID: ${taskId}`, 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
         
         const response = await fetch(`/api/task-result?task_id=${taskId}`, {
             method: 'GET',
@@ -290,16 +317,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        console.log('获取任务结果状态:', response.status, response.statusText);
+        console.log('%c[KLING-AI-SYS] %c获取任务结果状态:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', response.status, response.statusText);
         
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('获取任务结果失败:', errorData);
+            console.error('%c[KLING-AI-SYS] %c获取任务结果失败:', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;', errorData);
             throw new Error(`获取结果失败: ${errorData.message || response.statusText || '未知错误'}`);
         }
         
         const result = await response.json();
-        console.log('获取任务结果成功:', result);
+        console.log('%c[KLING-AI-SYS] %c获取任务结果成功:', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;', result);
         return result;
     }
 
@@ -325,6 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 显示结果容器
         resultContainer.classList.remove('hidden');
+        
+        console.log('%c[KLING-AI-SYS] %c视频已成功加载并显示', 'color: #00ff66; font-weight: bold;', 'color: #e0e0e0;');
     }
 
     // 下载视频
@@ -334,6 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
         a.download = `kling-video-${Date.now()}.mp4`;
         a.target = '_blank';
         a.click();
+        
+        console.log('%c[KLING-AI-SYS] %c开始下载视频', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
     }
 
     // 显示错误信息
@@ -341,6 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingIndicator.classList.add('hidden');
         errorMessage.textContent = message;
         errorContainer.classList.remove('hidden');
+        
+        console.error('%c[KLING-AI-SYS] %c显示错误信息:', 'color: #ff3366; font-weight: bold;', 'color: #e0e0e0;', message);
     }
 
     // 更新进度条
@@ -358,5 +391,10 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.disabled = true;
         progressFill.style.width = '0%';
         progressText.textContent = '0%';
+        
+        console.log('%c[KLING-AI-SYS] %cUI状态已重置', 'color: #00ffff; font-weight: bold;', 'color: #e0e0e0;');
     }
+    
+    // 初始化完成
+    console.log('%c[KLING-AI-SYS] %c系统初始化完成，等待用户输入...', 'color: #00ff66; font-weight: bold;', 'color: #e0e0e0;');
 });
