@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kling AI 视频生成工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kling AI 视频生成工具</h1>
+            <p>基于 Novita AI 的 KLING V1.6 API</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>参数设置</h2>
+                <form id="videoForm">
+                    <div class="form-group">
+                        <label for="generationType">生成类型</label>
+                        <select id="generationType">
+                            <option value="image">图片生成视频</option>
+                            <option value="text">文字生成视频</option>
+                        </select>
+                        <small>选择视频生成的输入类型</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mode">模式</label>
+                        <select id="mode">
+                            <option value="Standard">标准</option>
+                            <option value="Professional">专业</option>
+                        </select>
+                        <small>选择生成模式</small>
+                    </div>
+
+                    <div id="imageInputs">
+                        <div class="form-group">
+                            <label for="imageUrl">起始图片 URL</label>
+                            <input type="url" id="imageUrl">
+                            <small>必填，用作视频的起始帧</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endImageUrl">结束图片 URL</label>
+                            <input type="url" id="endImageUrl">
+                            <small>可选，仅在专业模式下可用</small>
+                        </div>
+                    </div>
+
+                    <div id="textInputs" class="hidden">
+                        <div class="form-group">
+                            <label for="textPrompt">文字提示词</label>
+                            <textarea id="textPrompt"></textarea>
+                            <small>必填，描述要生成的视频内容</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prompt">提示词</label>
+                        <textarea id="prompt"></textarea>
+                        <small id="promptHelp">必填，引导生成过程的文本提示</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="negativePrompt">负面提示词</label>
+                        <textarea id="negativePrompt"></textarea>
+                        <small>可选，指示模型应避免生成的元素</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guidanceScale">引导比例</label>
+                        <input type="range" id="guidanceScale" min="0" max="1" step="0.01" value="0.5">
+                        <span id="guidanceScaleValue">0.5</span>
+                        <small>控制生成内容与提示的匹配程度 (0-1)</small>
+                    </div>
+
+                    <button type="submit" id="generateBtn">生成视频</button>
+                </form>
+            </section>
+
+            <section class="result-section" id="resultSection">
+                <h2>生成结果</h2>
+                <div id="loadingIndicator" class="hidden">
+                    <div class="spinner"></div>
+                    <p id="statusMessage">正在处理请求...</p>
+                    <div id="progressBar">
+                        <div id="progressFill"></div>
+                    </div>
+                    <p id="progressText">0%</p>
+                </div>
+
+                <div id="resultContainer" class="hidden">
+                    <div id="videoContainer">
+                        <!-- 视频将在这里显示 -->
+                    </div>
+                    <div class="button-group">
+                        <button id="downloadBtn" disabled>下载视频</button>
+                    </div>
+                </div>
+
+                <div id="errorContainer" class="hidden">
+                    <p id="errorMessage"></p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>本工具使用 <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-i2v" target="_blank">Novita AI KLING V1.6 I2V API</a> 和 <a href="https://novita.ai/docs/api-reference/model-apis-kling-v1.6-t2v" target="_blank">Novita AI KLING V1.6 T2V API</a> 提供支持</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
